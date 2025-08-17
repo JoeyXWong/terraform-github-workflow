@@ -47,7 +47,4 @@ resource "mongodbatlas_cluster" "main" {
     sample_size_bi_connector            = 5000
     sample_refresh_interval_bi_connector = 300
   }
-
-  # Termination protection
-  termination_protection_enabled = false
 }
