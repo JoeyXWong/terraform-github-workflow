@@ -79,7 +79,7 @@ cat > trust-policy.json << EOF
           "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
         },
         "StringLike": {
-          "token.actions.githubusercontent.com:sub": "repo:YOUR_GITHUB_USERNAME/YOUR_REPO_NAME:*"
+          "token.actions.githubusercontent.com:sub": "repo:JoeyXWong/terraform-github-workflow:*"
         }
       }
     }
