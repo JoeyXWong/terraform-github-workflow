@@ -63,10 +63,10 @@ output "project_settings" {
   description = "MongoDB Atlas project settings"
   value = {
     collect_database_specifics_statistics = mongodbatlas_project.main.is_collect_database_specifics_statistics_enabled
-    data_explorer_enabled                = mongodbatlas_project.main.is_data_explorer_enabled
-    performance_advisor_enabled          = mongodbatlas_project.main.is_performance_advisor_enabled
-    realtime_performance_panel_enabled   = mongodbatlas_project.main.is_realtime_performance_panel_enabled
-    schema_advisor_enabled               = mongodbatlas_project.main.is_schema_advisor_enabled
+    data_explorer_enabled                 = mongodbatlas_project.main.is_data_explorer_enabled
+    performance_advisor_enabled           = mongodbatlas_project.main.is_performance_advisor_enabled
+    realtime_performance_panel_enabled    = mongodbatlas_project.main.is_realtime_performance_panel_enabled
+    schema_advisor_enabled                = mongodbatlas_project.main.is_schema_advisor_enabled
   }
 }
 
