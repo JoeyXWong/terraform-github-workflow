@@ -34,20 +34,4 @@ resource "mongodbatlas_cluster" "main" {
 
   # MongoDB version
   mongo_db_major_version = var.mongodb_version
-
-  # Storage and backup (limited on M0)
-  auto_scaling_disk_gb_enabled = false
-
-  # Advanced configuration
-  advanced_configuration {
-    javascript_enabled                   = true
-    minimum_enabled_tls_protocol         = "TLS1_2"
-    no_table_scan                        = false
-    oplog_size_mb                        = 1024
-    sample_size_bi_connector             = 5000
-    sample_refresh_interval_bi_connector = 300
-  }
-
-  # Termination protection
-  termination_protection_enabled = false
 }
