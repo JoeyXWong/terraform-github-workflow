@@ -23,7 +23,7 @@ provider "aws" {
 
 
 resource "mongodbatlas_cluster" "main" {
-  project_id = mongodbatlas_project.main.id
+  project_id = "631fe0432febff28714358b8"
   name       = var.cluster_name
 
   # Free tier M0 configuration
