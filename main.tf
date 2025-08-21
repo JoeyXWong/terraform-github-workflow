@@ -35,3 +35,17 @@ resource "mongodbatlas_cluster" "main" {
   # MongoDB version
   mongo_db_major_version = var.mongodb_version
 }
+
+resource "mongodbatlas_cluster" "main-2" {
+  project_id = "631fe0432febff28714358b8"
+  name       = "cluster2"
+
+  # Free tier M0 configuration
+  provider_name               = "TENANT"
+  backing_provider_name       = var.cloud_provider
+  provider_region_name        = var.mongodb_region
+  provider_instance_size_name = "M0"
+
+  # MongoDB version
+  mongo_db_major_version = var.mongodb_version
+}
