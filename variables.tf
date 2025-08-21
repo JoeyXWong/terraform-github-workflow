@@ -46,5 +46,5 @@ variable "mongodb_region" {
 variable "mongodb_version" {
   description = "MongoDB version"
   type        = string
-  default     = "7.0"
+  default     = "8.0"
 }
