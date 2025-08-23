@@ -39,12 +39,19 @@ jobs:
 
     # === NEW STEP ADDED HERE ===
     # This step fetches the JSON secret from AWS and parses it into outputs.
-    - name: Get secrets from AWS Secrets Manager
+     - name: Get secrets from AWS Secrets Manager
       id: get-secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
       with:
-        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }} # You will add this new secret to your repo
+        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
+
+    # === ADD THIS TEMPORARY DEBUG STEP ===
+    - name: 'DEBUG: Check Parsed Secrets'
+      run: |
+        echo "Public key loaded: ${{ steps.get-secrets.outputs.mongodb_atlas_public_key != '' }}"
+        echo "Private key loaded: ${{ steps.get-secrets.outputs.mongodb_atlas_private_key != '' }}"
+
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
