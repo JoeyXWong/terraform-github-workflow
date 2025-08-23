@@ -13,10 +13,8 @@ terraform {
 }
 
 provider "mongodbatlas" {
-  # This block is now empty.
-  # The provider will automatically and securely find the
-  # MONGODB_ATLAS_PUBLIC_KEY and MONGODB_ATLAS_PRIVATE_KEY
-  # environment variables set by your GitHub workflow.
+  public_key  = var.mongodb_atlas_public_key
+  private_key = var.mongodb_atlas_private_key
 }
 
 provider "aws" {
