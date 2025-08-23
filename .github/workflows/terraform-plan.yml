@@ -33,9 +33,18 @@ jobs:
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }} # This stays the same
         role-session-name: github-actions-terraform-plan
         aws-region: us-east-1
+
+    # === NEW STEP ADDED HERE ===
+    # This step fetches the JSON secret from AWS and parses it into outputs.
+    - name: Get secrets from AWS Secrets Manager
+      id: get-secrets
+      uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      with:
+        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }} # You will add this new secret to your repo
+        parse-json-secrets: true
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -56,16 +65,18 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
+    # === THIS STEP IS MODIFIED ===
+    # The 'env' block now references the outputs from the 'get-secrets' step above.
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
       env:
-        TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
-        TF_VAR_mongodb_atlas_org_id: ${{ secrets.MONGODB_ATLAS_ORG_ID }}
-        TF_VAR_database_password: ${{ secrets.DATABASE_PASSWORD }}
-        TF_VAR_app_password: ${{ secrets.APP_PASSWORD }}
-        TF_VAR_readonly_password: ${{ secrets.READONLY_PASSWORD }}
+        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.mongodb_atlas_public_key }}
+        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.mongodb_atlas_private_key }}
+        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.mongodb_atlas_org_id }}
+        TF_VAR_database_password: ${{ steps.get-secrets.outputs.database_password }}
+        TF_VAR_app_password: ${{ steps.get-secrets.outputs.app_password }}
+        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.readonly_password }}
       continue-on-error: true
 
     - name: Update Pull Request
