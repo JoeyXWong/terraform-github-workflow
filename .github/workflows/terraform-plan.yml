@@ -71,12 +71,14 @@ jobs:
       id: plan
       run: terraform plan -no-color -input=false
       env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.mongodb_atlas_public_key }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.mongodb_atlas_private_key }}
+        # For the MongoDB Atlas Provider configuration (no TF_VAR_ prefix)
+        MONGODB_ATLAS_PUBLIC_KEY: ${{ steps.get-secrets.outputs.mongodb_atlas_public_key }}
+        MONGODB_ATLAS_PRIVATE_KEY: ${{ steps.get-secrets.outputs.mongodb_atlas_private_key }}
+
+        # For your regular Terraform variables (these are likely used by resources)
         TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.mongodb_atlas_org_id }}
-        TF_VAR_database_password: ${{ steps.get-secrets.outputs.database_password }}
-        TF_VAR_app_password: ${{ steps.get-secrets.outputs.app_password }}
-        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.readonly_password }}
+        TF_VAR_mongodb_atlas_project_id: ${{ steps.get-secrets.outputs.mongodb_atlas_project_id }}
+        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.mongodb_atlas_private_key }}
       continue-on-error: true
 
     - name: Update Pull Request
