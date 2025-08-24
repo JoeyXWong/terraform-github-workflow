@@ -13,8 +13,7 @@ terraform {
 }
 
 provider "mongodbatlas" {
-  public_key  = var.mongodb_atlas_public_key
-  private_key = var.mongodb_atlas_private_key
+
 }
 
 provider "aws" {
@@ -22,7 +21,7 @@ provider "aws" {
 }
 
 
-resource "mongodbatlas_cluster" "main2" {
+resource "mongodbatlas_cluster" "main" {
   project_id = "631fe0432febff28714358b8"
   name       = var.cluster_name
 
