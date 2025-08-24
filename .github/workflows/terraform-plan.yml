@@ -63,14 +63,6 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: Debug Terraform variables
-      run: |
-        echo "TF_VAR_mongodb_atlas_public_key: $MONGODB_ATLAS_PUBLIC_KEY"
-        echo "TF_VAR_mongodb_atlas_private_key: $MONGODB_ATLAS_PRIVATE_KEY"
-      env:
-        MONGODB_ATLAS_PUBLIC_KEY: ${{ env.MONGODB_ATLAS_PUBLIC_KEY }}
-        MONGODB_ATLAS_PRIVATE_KEY: ${{ env.MONGODB_ATLAS_PRIVATE_KEY }}
-
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
@@ -78,6 +70,9 @@ jobs:
         TF_VAR_mongodb_atlas_public_key: ${{ env.MONGODB_ATLAS_PUBLIC_KEY }}
         TF_VAR_mongodb_atlas_private_key: ${{ env.MONGODB_ATLAS_PRIVATE_KEY }}
         TF_VAR_mongodb_atlas_org_id: ${{ env.MONGODB_ATLAS_ORG_ID }}
+        TF_VAR_database_password: ${{ env.DATABASE_PASSWORD }}
+        TF_VAR_app_password: ${{ env.APP_PASSWORD }}
+        TF_VAR_readonly_password: ${{ env.READONLY_PASSWORD }}
       continue-on-error: true
 
     - name: Update Pull Request
@@ -88,10 +83,10 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
-          #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-          #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-          #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+          const output = `#### Terraform Format and Style 🖌${{ steps.fmt.outcome }}
+          #### Terraform Initialization ⚙️${{ steps.init.outcome }}
+          #### Terraform Validation 🤖${{ steps.validate.outcome }}
+          #### Terraform Plan 📖${{ steps.plan.outcome }}
 
           <details><summary>Show Plan</summary>
 
