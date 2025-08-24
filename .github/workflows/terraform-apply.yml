@@ -56,7 +56,7 @@ jobs:
       id: get-secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
       with: 
-        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }}
+        secret-ids: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
 
     - name: Debug secrets
