@@ -53,28 +53,22 @@ jobs:
       run: terraform validate -no-color
 
     - name: Get secrets from AWS Secrets Manager
-      id: get_secrets
-      uses: aws-actions/aws-secrets-manager-get-secrets@v1
-      with:
-        secret-ids:
-          MONGODB_ATLAS_PUBLIC_KEY,
-          MONGODB_ATLAS_PRIVATE_KEY,
-          MONGODB_ATLAS_ORG_ID,
-          DATABASE_PASSWORD,
-          APP_PASSWORD,
-          READONLY_PASSWORD
-        aws-region: us-east-1
+      id: get-secrets
+      uses: aws-actions/aws-secretsmanager-get-secrets@v2
+      with: 
+        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }}
+        parse-json-secrets: true
 
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false -out=tfplan
       env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-        TF_VAR_mongodb_atlas_org_id: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_ORG_ID }}
-        TF_VAR_database_password: ${{ steps.get_secrets.outputs.DATABASE_PASSWORD }}
-        TF_VAR_app_password: ${{ steps.get_secrets.outputs.APP_PASSWORD }}
-        TF_VAR_readonly_password: ${{ steps.get_secrets.outputs.READONLY_PASSWORD }}
+        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
+        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
+        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}
+        TF_VAR_database_password: ${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}
+        TF_VAR_app_password: ${{ steps.get-secrets.outputs.APP_PASSWORD }}
+        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.READONLY_PASSWORD }}
 
     - name: Terraform Show Plan
       id: show
@@ -84,12 +78,12 @@ jobs:
       id: apply
       run: terraform apply -auto-approve -input=false tfplan
       env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-        TF_VAR_mongodb_atlas_org_id: ${{ steps.get_secrets.outputs.MONGODB_ATLAS_ORG_ID }}
-        TF_VAR_database_password: ${{ steps.get_secrets.outputs.DATABASE_PASSWORD }}
-        TF_VAR_app_password: ${{ steps.get_secrets.outputs.APP_PASSWORD }}
-        TF_VAR_readonly_password: ${{ steps.get_secrets.outputs.READONLY_PASSWORD }}
+        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
+        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
+        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}
+        TF_VAR_database_password: ${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}
+        TF_VAR_app_password: ${{ steps.get-secrets.outputs.APP_PASSWORD }}
+        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.READONLY_PASSWORD }}
 
     - name: Terraform Output
       id: output

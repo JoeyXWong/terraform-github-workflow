@@ -37,13 +37,11 @@ jobs:
         role-session-name: github-actions-terraform-plan
         aws-region: us-east-1
 
-    # === NEW STEP ADDED HERE ===
-    # This step fetches the JSON secret from AWS and parses it into outputs.
     - name: Get secrets from AWS Secrets Manager
       id: get-secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
       with: 
-        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }} # You will add this new secret to your repo
+        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
 
     - name: Setup Terraform
@@ -122,6 +120,10 @@ jobs:
         output: 'trivy-results.sarif'
 
     - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v3
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'y tab
       uses: github/codeql-action/upload-sarif@v3
       if: always()
       with:
