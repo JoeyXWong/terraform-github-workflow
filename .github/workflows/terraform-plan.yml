@@ -46,12 +46,12 @@ jobs:
 
     - name: Set Terraform environment variables
       run: |
-        echo "::set-env name=TF_VAR_mongodb_atlas_public_key::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}"
-        echo "::set-env name=TF_VAR_mongodb_atlas_private_key::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}"
-        echo "::set-env name=TF_VAR_mongodb_atlas_org_id::${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}"
-        echo "::set-env name=TF_VAR_database_password::${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}"
-        echo "::set-env name=TF_VAR_app_password::${{ steps.get-secrets.outputs.APP_PASSWORD }}"
-        echo "::set-env name=TF_VAR_readonly_password::${{ steps.get-secrets.outputs.READONLY_PASSWORD }}"
+        echo "TF_VAR_mongodb_atlas_public_key=${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}" >> $GITHUB_ENV
+        echo "TF_VAR_mongodb_atlas_private_key=${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}" >> $GITHUB_ENV
+        echo "TF_VAR_mongodb_atlas_org_id=${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}" >> $GITHUB_ENV
+        echo "TF_VAR_database_password=${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}" >> $GITHUB_ENV
+        echo "TF_VAR_app_password=${{ steps.get-secrets.outputs.APP_PASSWORD }}" >> $GITHUB_ENV
+        echo "TF_VAR_readonly_password=${{ steps.get-secrets.outputs.READONLY_PASSWORD }}" >> $GITHUB_ENV
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -98,7 +98,7 @@ jobs:
 
           </details>
 
-          *Pushed by: @${{ github.actor }}, Action: `${{ github.event.event_name }}`*`;
+          *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*`;
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
