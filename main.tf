@@ -22,7 +22,7 @@ provider "aws" {
 }
 
 
-resource "mongodbatlas_cluster" "main" {
+resource "mongodbatlas_cluster" "main2" {
   project_id = "631fe0432febff28714358b8"
   name       = var.cluster_name
 
