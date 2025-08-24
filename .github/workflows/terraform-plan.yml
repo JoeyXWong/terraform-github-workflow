@@ -63,24 +63,16 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    - name: Debug Terraform variables
-      run: |
-        echo "TF_VAR_mongodb_atlas_public_key: $TF_VAR_mongodb_atlas_public_key"
-        echo "TF_VAR_mongodb_atlas_private_key: $TF_VAR_mongodb_atlas_private_key"
-      env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
       env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}
-        TF_VAR_database_password: ${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}
-        TF_VAR_app_password: ${{ steps.get-secrets.outputs.APP_PASSWORD }}
-        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.READONLY_PASSWORD }}
+        TF_VAR_mongodb_atlas_public_key: ${{ env.MONGODB_ATLAS_PUBLIC_KEY }}
+        TF_VAR_mongodb_atlas_private_key: ${{ env.MONGODB_ATLAS_PRIVATE_KEY }}
+        TF_VAR_mongodb_atlas_org_id: ${{ env.MONGODB_ATLAS_ORG_ID }}
+        TF_VAR_database_password: ${{ env.DATABASE_PASSWORD }}
+        TF_VAR_app_password: ${{ env.APP_PASSWORD }}
+        TF_VAR_readonly_password: ${{ env.READONLY_PASSWORD }}
       continue-on-error: true
 
     - name: Update Pull Request
@@ -91,10 +83,10 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
-          #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-          #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-          #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+          const output = `#### Terraform Format and Style 🖌\`${{ steps.fmt.outcome }}\`
+          #### Terraform Initialization ⚙️\`${{ steps.init.outcome }}\`
+          #### Terraform Validation 🤖\`${{ steps.validate.outcome }}\`
+          #### Terraform Plan 📖\`${{ steps.plan.outcome }}\`
 
           <details><summary>Show Plan</summary>
 
@@ -104,7 +96,9 @@ jobs:
 
           </details>
 
-          *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*";
+          *Pushed by: @${{ github.actor }}, Action: 
+${{ github.event_name }}
+`
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
