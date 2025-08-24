@@ -63,6 +63,14 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
+    - name: Debug Terraform variables
+      run: |
+        echo "TF_VAR_mongodb_atlas_public_key: $TF_VAR_mongodb_atlas_public_key"
+        echo "TF_VAR_mongodb_atlas_private_key: $TF_VAR_mongodb_atlas_private_key"
+      env:
+        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
+        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
+
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
