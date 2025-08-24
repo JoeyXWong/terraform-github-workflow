@@ -59,6 +59,13 @@ jobs:
         secret-id: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
 
+    - name: Debug secrets
+      run: |
+        echo "::add-mask::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}"
+        echo "::add-mask::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}"
+        echo "MONGODB_ATLAS_PUBLIC_KEY: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}"
+        echo "MONGODB_ATLAS_PRIVATE_KEY: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}"
+
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false -out=tfplan
