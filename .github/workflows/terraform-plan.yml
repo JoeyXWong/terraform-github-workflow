@@ -44,13 +44,14 @@ jobs:
         secret-ids: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
 
-    - name: Debug Terraform variables
+    - name: Set Terraform environment variables
       run: |
-        echo "MONGODB_ATLAS_PUBLIC_KEY: $MONGODB_ATLAS_PUBLIC_KEY"
-        echo "MONGODB_ATLAS_PRIVATE_KEY: $MONGODB_ATLAS_PRIVATE_KEY"
-      env:
-        MONGODB_ATLAS_PUBLIC_KEY: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        MONGODB_ATLAS_PRIVATE_KEY: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
+        echo "::set-env name=TF_VAR_mongodb_atlas_public_key::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}"
+        echo "::set-env name=TF_VAR_mongodb_atlas_private_key::${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}"
+        echo "::set-env name=TF_VAR_mongodb_atlas_org_id::${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}"
+        echo "::set-env name=TF_VAR_database_password::${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}"
+        echo "::set-env name=TF_VAR_app_password::${{ steps.get-secrets.outputs.APP_PASSWORD }}"
+        echo "::set-env name=TF_VAR_readonly_password::${{ steps.get-secrets.outputs.READONLY_PASSWORD }}"
 
     - name: Setup Terraform
       uses: hashicorp/setup-terraform@v3
@@ -74,13 +75,6 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
-      env:
-        TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
-        TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}
-        TF_VAR_database_password: ${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}
-        TF_VAR_app_password: ${{ steps.get-secrets.outputs.APP_PASSWORD }}
-        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.READONLY_PASSWORD }}
       continue-on-error: true
 
     - name: Update Pull Request
@@ -104,7 +98,7 @@ jobs:
 
           </details>
 
-          *Pushed by: @${{ github.actor }}, Action: `${{ github.event_name }}`*`;
+          *Pushed by: @${{ github.actor }}, Action: `${{ github.event.event_name }}`*`;
 
           github.rest.issues.createComment({
             issue_number: context.issue.number,
