@@ -1,7 +1,7 @@
 name: 'Terraform Plan'
 
 on:
-  pull_request_target:
+  pull_request:
     branches:
       - main
     paths:
@@ -28,22 +28,20 @@ jobs:
     - name: Checkout PR Code
       uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.pull_request.head.sha }}
+        ref: ${{ github.event.pull_request.head.ref }}
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v4
       with:
-        role-to-assume: ${{ secrets.AWS_ROLE_ARN }} # This stays the same
+        role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
         role-session-name: github-actions-terraform-plan
         aws-region: us-east-1
 
-    # === NEW STEP ADDED HERE ===
-    # This step fetches the JSON secret from AWS and parses it into outputs.
     - name: Get secrets from AWS Secrets Manager
       id: get-secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
       with: 
-        secret-id: ${{ secrets.SECRETS_MANAGER_ARN }} # You will add this new secret to your repo
+        secret-ids: ${{ secrets.SECRETS_MANAGER_ARN }}
         parse-json-secrets: true
 
     - name: Setup Terraform
@@ -65,18 +63,16 @@ jobs:
       id: validate
       run: terraform validate -no-color
 
-    # === THIS STEP IS MODIFIED ===
-    # The 'env' block now references the outputs from the 'get-secrets' step above.
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color -input=false
       env:
-        # For the MongoDB Atlas Provider configuration (no TF_VAR_ prefix)
         TF_VAR_mongodb_atlas_public_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PUBLIC_KEY }}
         TF_VAR_mongodb_atlas_private_key: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_PRIVATE_KEY }}
-
-        # TF_VAR_mongodb_atlas_public_key: ${{ secrets.MONGODB_ATLAS_PUBLIC_KEY }}
-        # TF_VAR_mongodb_atlas_private_key: ${{ secrets.MONGODB_ATLAS_PRIVATE_KEY }}
+        TF_VAR_mongodb_atlas_org_id: ${{ steps.get-secrets.outputs.MONGODB_ATLAS_ORG_ID }}
+        TF_VAR_database_password: ${{ steps.get-secrets.outputs.DATABASE_PASSWORD }}
+        TF_VAR_app_password: ${{ steps.get-secrets.outputs.APP_PASSWORD }}
+        TF_VAR_readonly_password: ${{ steps.get-secrets.outputs.READONLY_PASSWORD }}
       continue-on-error: true
 
     - name: Update Pull Request
@@ -87,10 +83,10 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const output = `#### Terraform Format and Style 🖌`${{ steps.fmt.outcome }}`
-          #### Terraform Initialization ⚙️`${{ steps.init.outcome }}`
-          #### Terraform Validation 🤖`${{ steps.validate.outcome }}`
-          #### Terraform Plan 📖`${{ steps.plan.outcome }}`
+          const output = `#### Terraform Format and Style 🖌${{ steps.fmt.outcome }}
+          #### Terraform Initialization ⚙️${{ steps.init.outcome }}
+          #### Terraform Validation 🤖${{ steps.validate.outcome }}
+          #### Terraform Plan 📖${{ steps.plan.outcome }}
 
           <details><summary>Show Plan</summary>
 
