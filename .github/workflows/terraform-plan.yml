@@ -37,9 +37,6 @@ jobs:
         role-session-name: github-actions-terraform-plan
         aws-region: us-east-1
 
-    - name: Debug secret ARN
-      run: echo "SECRETS_MANAGER_ARN: ${{ secrets.SECRETS_MANAGER_ARN }}"
-
     - name: Get secrets from AWS Secrets Manager
       id: get-secrets
       uses: aws-actions/aws-secretsmanager-get-secrets@v2
